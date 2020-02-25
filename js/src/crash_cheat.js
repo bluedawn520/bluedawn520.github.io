@@ -1,3 +1,17 @@
-// build time:Wed Feb 26 2020 03:45:51 GMT+0800 (中国标准时间)
-var OriginTitle=document.title;var titleTime;document.addEventListener("visibilitychange",function(){if(document.hidden){$('[rel="icon"]').attr("href","/img/TEP.ico");document.title="╭(°A°`)╮ 崩溃了 ~";clearTimeout(titleTime)}else{$('[rel="icon"]').attr("href","/favicon.ico");document.title="(ฅ>ω<*ฅ) 欢迎来到 ~"+OriginTitle;titleTime=setTimeout(function(){document.title=OriginTitle},2e3)}});
-//rebuild by neat 
+<!--崩溃欺骗-->
+ var OriginTitle = document.title;
+ var titleTime;
+ document.addEventListener('visibilitychange', function () {
+     if (document.hidden) {
+         $('[rel="icon"]').attr('href', "/img/TEP.ico");
+         document.title = '╭(°A°`)╮ 崩溃了 ~';
+         clearTimeout(titleTime);
+     }
+     else {
+         $('[rel="icon"]').attr('href', "/favicon.ico");
+         document.title = '(ฅ>ω<*ฅ) 欢迎来到 ~' + OriginTitle;
+         titleTime = setTimeout(function () {
+             document.title = OriginTitle;
+         }, 2000);
+     }
+ });
