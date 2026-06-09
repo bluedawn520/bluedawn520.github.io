@@ -1,0 +1,45 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const allTags = [...new Set(posts.flatMap(post => post.data.tags || []))];
+  
+  return allTags.map(tag => ({
+    params: { tag },
+    props: { 
+      tag,
+      posts: posts.filter(post => post.data.tags?.includes(tag))
+        .sort((a, b) => b.data.pubDate - a.data.pubDate)
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<Layout title={`标签: ${tag} | BlueDawn's Blog`} description={`包含标签 "${tag}" 的文章列表`}>
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold mb-2">
+      标签: <span class="text-primary-600">{tag}</span>
+    </h1>
+    <p class="text-gray-600 dark:text-gray-400 mb-8">共 {posts.length} 篇文章</p>
+    
+    <div class="space-y-6">
+      {posts.map(post => (
+        <article class="border-b border-gray-200 dark:border-gray-700 pb-6">
+          <h2 class="text-xl font-bold mb-2">
+            <a href={`/blog/${post.slug}/`} class="hover:text-primary-600 transition-colors">
+              {post.data.title}
+            </a>
+          </h2>
+          <p class="text-gray-600 dark:text-gray-400 mb-2">{post.data.description}</p>
+          <div class="text-sm text-gray-500 dark:text-gray-400">
+            <time>{post.data.pubDate.toLocaleDateString('zh-CN')}</time>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</Layout>

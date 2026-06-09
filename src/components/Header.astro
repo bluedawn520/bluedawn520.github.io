@@ -1,0 +1,137 @@
+---
+import { SITE_TITLE } from '../consts';
+import HeaderLink from './HeaderLink.astro';
+---
+
+<header>
+	<nav>
+		<a class="brand-mark" href="/" aria-label={SITE_TITLE}>
+			<svg viewBox="0 0 48 32" aria-hidden="true">
+				<path d="M17 5 7 16l10 11" />
+				<path d="M31 5 41 16 31 27" />
+				<path d="M26 3 20 29" />
+			</svg>
+		</a>
+		<div class="internal-links">
+			<HeaderLink href="/">首页</HeaderLink>
+			<HeaderLink href="/blog">归档</HeaderLink>
+			<HeaderLink href="/blog">分类</HeaderLink>
+			<HeaderLink href="/blog">标签</HeaderLink>
+			<HeaderLink href="/blog">书单</HeaderLink>
+			<HeaderLink href="/blog">工具箱</HeaderLink>
+			<HeaderLink href="/about">关于</HeaderLink>
+		</div>
+		<div class="utility-links" aria-label="Utilities">
+			<a href="/blog/" aria-label="搜索">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" /><path d="m16 16 5 5" fill="none" /></svg>
+				<span>搜索</span>
+			</a>
+			<a href="/" aria-label="主题">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" /><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1" fill="none" /></svg>
+			</a>
+			<a href="/rss.xml" aria-label="RSS">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5c7.7 0 14 6.3 14 14" fill="none" /><path d="M5 12c3.9 0 7 3.1 7 7" fill="none" /><circle cx="6" cy="18" r="1.5" fill="currentColor" stroke="none" /></svg>
+			</a>
+		</div>
+	</nav>
+</header>
+<style>
+	header {
+		margin: 0;
+		padding: 0;
+		background: rgba(255, 255, 255, 0.9);
+		border-top: 1px solid rgb(var(--black));
+		border-bottom: 2px solid rgb(var(--black));
+		backdrop-filter: blur(12px);
+	}
+	nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		max-width: 1440px;
+		min-height: 54px;
+		margin: 0 auto;
+		padding: 0 2.6rem;
+		gap: 1.75rem;
+	}
+	nav a {
+		color: rgb(var(--black));
+		text-decoration: none;
+	}
+	.brand-mark {
+		display: grid;
+		place-items: center;
+		color: var(--accent);
+	}
+	.brand-mark svg {
+		width: 44px;
+		height: 30px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2.2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.internal-links {
+		display: flex;
+		gap: 2rem;
+		align-items: center;
+		flex: 1 1 auto;
+	}
+	.internal-links a {
+		display: grid;
+		align-content: center;
+		min-height: 54px;
+		padding: 0 0.2rem;
+		border-bottom: 3px solid transparent;
+		font-size: 0.96rem;
+		color: rgb(var(--black));
+	}
+	nav a.active {
+		text-decoration: none;
+		border-bottom-color: var(--accent);
+		color: rgb(var(--black));
+	}
+	.utility-links {
+		display: flex;
+		align-items: center;
+		gap: 1.2rem;
+	}
+	.utility-links a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.9rem;
+	}
+	.utility-links svg {
+		width: 19px;
+		height: 19px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.utility-links svg * {
+		vector-effect: non-scaling-stroke;
+	}
+	@media (max-width: 720px) {
+		nav {
+			padding: 0 1rem;
+			gap: 1rem;
+			overflow-x: auto;
+		}
+		.internal-links {
+			gap: 1.1rem;
+			flex: none;
+		}
+		.internal-links a {
+			min-height: 50px;
+			font-size: 0.9rem;
+			white-space: nowrap;
+		}
+		.utility-links {
+			display: none;
+		}
+	}
+</style>

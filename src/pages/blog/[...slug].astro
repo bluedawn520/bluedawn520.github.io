@@ -1,0 +1,37 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import BlogPost from '../../layouts/BlogPost.astro';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return posts.map((post) => ({
+		params: { slug: post.slug },
+		props: post,
+	}));
+}
+
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+const { Content, headings } = await post.render();
+
+function getWordCount(body: string): number {
+	if (!body) return 0;
+	const chineseChars = (body.match(/[\u4e00-\u9fa5]/g) || []).length;
+	const englishWords = (body.match(/[a-zA-Z]+/g) || []).length;
+	return chineseChars + englishWords;
+}
+
+function getReadingTime(body: string): number {
+	const count = getWordCount(body);
+	const minutes = Math.ceil(count / 300);
+	return Math.max(1, minutes);
+}
+
+const wordCount = getWordCount(post.body || '');
+const readingTime = getReadingTime(post.body || '');
+---
+
+<BlogPost {...post.data} headings={headings} slug={post.slug} wordCount={wordCount} readingTime={readingTime}>
+	<Content />
+</BlogPost>

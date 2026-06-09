@@ -1,0 +1,79 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+const categories = [...new Set(posts.map(post => post.data.category).filter(Boolean))];
+
+function normalizePart(part: string) {
+	return part.trim();
+}
+
+function slugPart(part: string) {
+	return normalizePart(part)
+		.toLowerCase()
+		.replace(/\+/g, 'plus')
+		.replace(/[^\p{Letter}\p{Number}]+/gu, '-')
+		.replace(/^-+|-+$/g, '');
+}
+
+// Build category hierarchy
+const categoryMap = new Map<string, { label: string; posts: string[] }>();
+for (const cat of categories) {
+	const parts = cat.split('/').map(normalizePart).filter(Boolean);
+	let path = '';
+	let label = '';
+	for (const part of parts) {
+		path = path ? `${path}/${slugPart(part)}` : slugPart(part);
+		label = label ? `${label} / ${part}` : part;
+		if (!categoryMap.has(path)) {
+			categoryMap.set(path, { label, posts: [] });
+		}
+	}
+}
+
+// Get posts for each category
+for (const post of posts) {
+	if (post.data.category) {
+		const parts = post.data.category.split('/').map(normalizePart).filter(Boolean);
+		let path = '';
+		for (const part of parts) {
+			path = path ? `${path}/${slugPart(part)}` : slugPart(part);
+			categoryMap.get(path)!.posts.push(post.slug);
+		}
+	}
+}
+
+const topLevel = [...categoryMap.keys()].filter(k => !k.includes('/'));
+---
+
+<Layout title="分类" description="文章分类">
+	<div class="max-w-3xl mx-auto">
+		<h1 class="text-3xl font-bold mb-8">分类</h1>
+		<div class="space-y-6">
+			{topLevel.map(cat => {
+				const subCats = [...categoryMap.keys()].filter(k => k.startsWith(cat + '/') && k.split('/').length === 2);
+				return (
+					<div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+						<h2 class="text-xl font-bold mb-2">
+							<a href={`/categories/${cat}/`} class="hover:text-primary-600 transition-colors">{categoryMap.get(cat)!.label}</a>
+							<span class="text-sm font-normal text-gray-500 ml-2">({categoryMap.get(cat)!.posts.length} 篇)</span>
+						</h2>
+						{subCats.length > 0 && (
+							<div class="flex flex-wrap gap-2 mt-2">
+								{subCats.map(sub => {
+									const name = categoryMap.get(sub)!.label.split(' / ').pop();
+									return (
+										<a href={`/categories/${sub}/`} class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors">
+											{name} <span class="text-gray-500">({categoryMap.get(sub)!.posts.length})</span>
+										</a>
+									);
+									})}
+								</div>
+							)}
+						</div>
+					);
+					})}
+				</div>
+			</div>
+		</Layout>

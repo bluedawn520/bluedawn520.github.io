@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+const allTags = posts.flatMap(post => post.data.tags || []);
+const tagCounts = allTags.reduce((acc, tag) => {
+  acc[tag] = (acc[tag] || 0) + 1;
+  return acc;
+}, {});
+
+const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
+---
+
+<Layout title="标签 | BlueDawn's Blog" description="文章标签云">
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8">标签云</h1>
+    
+    <div class="flex flex-wrap gap-3">
+      {sortedTags.map(([tag, count]) => (
+        <a
+          href={`/tags/${tag}/`}
+          class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors"
+        >
+          {tag} <span class="text-sm text-gray-500">({count})</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</Layout>

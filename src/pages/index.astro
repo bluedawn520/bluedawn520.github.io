@@ -1,0 +1,89 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Search from '../components/Search.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+function getWordCount(body: string): number {
+	if (!body) return 0;
+	const chineseChars = (body.match(/[一-龥]/g) || []).length;
+	const englishWords = (body.match(/[a-zA-Z]+/g) || []).length;
+	return chineseChars + englishWords;
+}
+
+function getReadingTime(body: string): number {
+	const count = getWordCount(body);
+	const minutes = Math.ceil(count / 300);
+	return Math.max(1, minutes);
+}
+
+function categoryPath(category: string): string {
+	return category
+		.split('/')
+		.map((part) =>
+			part
+				.trim()
+				.toLowerCase()
+				.replace(/\+/g, 'plus')
+				.replace(/[^\p{Letter}\p{Number}]+/gu, '-')
+				.replace(/^-+|-+$/g, ''),
+		)
+		.filter(Boolean)
+		.join('/');
+}
+---
+
+<Layout title="不羁" description="技术笔记 · 阅读研究 · 英语学习 · 工程记录">
+	<div class="max-w-3xl mx-auto">
+		<div class="text-center mb-12">
+			<p class="text-lg text-gray-600 dark:text-gray-400 mb-8">技术笔记 · 阅读研究 · 英语学习 · 工程记录</p>
+			<div class="max-w-md mx-auto">
+				<Search />
+			</div>
+		</div>
+
+		<div class="space-y-8">
+			{sortedPosts.map(post => {
+				const wordCount = getWordCount(post.body || '');
+				const readingTime = getReadingTime(post.body || '');
+				return (
+					<article class="border-b border-gray-200 dark:border-gray-700 pb-8">
+						<div class="flex items-center gap-3 mb-2 text-sm text-gray-500 dark:text-gray-400 flex-wrap">
+							<time>{post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+							{post.data.tags?.map(tag => (
+								<a href={`/tags/${tag}/`} class="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded-full text-xs hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors">{tag}</a>
+							))}
+							{post.data.category && (
+								<span class="flex items-center gap-1">
+									<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7"/><path d="M3 7l9-4 9 4"/><line x1="3" y1="7" x2="12" y2="12"/><line x1="21" y1="7" x2="12" y2="12"/></svg>
+									<a href={`/categories/${categoryPath(post.data.category)}/`} class="hover:text-primary-600 transition-colors">{post.data.category}</a>
+								</span>
+							)}
+							<span class="flex items-center gap-1">
+								<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+								{wordCount.toLocaleString()} 字
+							</span>
+							<span class="flex items-center gap-1">
+								<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+								约 {readingTime} 分钟
+							</span>
+							{post.data.updatedDate && (
+								<span class="flex items-center gap-1">
+									<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+									更新于 {post.data.updatedDate.toLocaleDateString('zh-CN')}
+								</span>
+							)}
+						</div>
+						<h2 class="text-2xl font-bold mb-2">
+							<a href={`/blog/${post.slug}/`} class="hover:text-primary-600 transition-colors">{post.data.title}</a>
+						</h2>
+						<p class="text-gray-600 dark:text-gray-400 mb-4">{post.data.description}</p>
+						<a href={`/blog/${post.slug}/`} class="text-primary-600 dark:text-primary-400 hover:underline">阅读更多 →</a>
+					</article>
+				);
+			})}
+		</div>
+	</div>
+</Layout>

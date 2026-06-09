@@ -1,0 +1,71 @@
+---
+const today = new Date();
+---
+
+<footer>
+	<div>
+		<strong>bluedawn520</strong>
+		<span>&copy; {today.getFullYear()}</span>
+	</div>
+	<blockquote>代码是写给机器的诗，注释是写给人类的信。<cite>— Rob Pike</cite></blockquote>
+	<div class="footer-links">
+		<span>基于 Astro 构建</span>
+		<a href="/rss.xml">RSS</a>
+		<a href="https://github.com/bluedawn520" target="_blank" rel="noreferrer">GitHub</a>
+	</div>
+</footer>
+<style>
+	footer {
+		max-width: 100%;
+		margin: 0 auto;
+		padding: 1.7rem calc((100% - 1320px) / 2);
+		color: var(--muted);
+		font-size: 0.82rem;
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		align-items: center;
+		gap: 1rem;
+		border-top: 2px solid rgb(var(--black));
+	}
+	blockquote {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		text-align: center;
+		color: rgb(var(--gray-dark));
+	}
+	cite {
+		display: inline-block;
+		margin-left: 0.6rem;
+		color: var(--muted);
+		font-style: normal;
+	}
+	.footer-links {
+		display: flex;
+		justify-content: flex-end;
+		gap: 1rem;
+	}
+	a {
+		text-decoration: none;
+		color: var(--muted);
+	}
+	a:hover {
+		color: rgb(var(--black));
+	}
+	@media (max-width: 720px) {
+		footer {
+			display: block;
+			padding: 1.5rem 1rem 3rem;
+		}
+		.footer-links {
+			margin-top: 0.8rem;
+			justify-content: flex-start;
+			flex-wrap: wrap;
+		}
+		blockquote {
+			margin-top: 0.8rem;
+			text-align: left;
+		}
+	}
+</style>
